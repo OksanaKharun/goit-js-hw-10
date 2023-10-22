@@ -4,15 +4,19 @@ import { fetchBreeds, fetchCatByBreed } from './cat-api.js';
 const breedSelect = document.querySelector('.breed-select');
 const loader = document.querySelector('.loader');
 const error = document.querySelector('.error');
-const infoCat= document.querySelector('.info-cat');
+const infoCat = document.querySelector('.info-cat');
+
+
 
 function createBreedOption(breed) {
   error.style.display = 'none';
+  
 
   const option = document.createElement('option');
   option.value = breed.id;
   option.textContent = breed.name;
   breedSelect.appendChild(option);
+
 }
 
 function displayInfoCat(cat) {
@@ -22,12 +26,20 @@ function displayInfoCat(cat) {
     <p> ${cat.breeds[0].description}</p>
     <p> ${cat.breeds[0].temperament}</p> `;
   infoCat.style.display = 'block';
+ 
 }
 
+
 breedSelect.addEventListener('change', () => {
+
+  refs.breedSelect.classList.add('hidden');
+  refs.error.classList.add('hidden');
+
   const selectedBreedId = breedSelect.value;
+  
 
   if (selectedBreedId) {
+
     loader.style.display = 'block';
     infoCat.style.display = 'none';
     error.style.display = 'none';
@@ -36,6 +48,7 @@ breedSelect.addEventListener('change', () => {
       .then(cat => {
         displayInfoCat(cat);
         loader.style.display = 'none';
+        
       })
       .catch(() => {
         Notiflix.Notify.failure(
@@ -45,6 +58,7 @@ breedSelect.addEventListener('change', () => {
       });
   } else {
     infoCat.style.display = 'none';
+    
   }
 });
 
@@ -52,6 +66,8 @@ fetchBreeds()
   .then(breeds => {
     breeds.forEach(breed => createBreedOption(breed));
     loader.style.display = 'none';
+     
+    
   })
   .catch(() => {
     Notiflix.Notify.warning(
@@ -59,3 +75,7 @@ fetchBreeds()
     );
     loader.style.display = 'none';
   });
+
+ 
+
+  
