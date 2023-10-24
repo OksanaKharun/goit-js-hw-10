@@ -1,81 +1,62 @@
 import Notiflix from 'notiflix';
 import { fetchBreeds, fetchCatByBreed } from './cat-api.js';
 
-const breedSelect = document.querySelector('.breed-select');
-const loader = document.querySelector('.loader');
-const error = document.querySelector('.error');
-const infoCat = document.querySelector('.info-cat');
+const elements = {
+  selectEl: document.querySelector('.breed-select'),
+  textMarkEl: document.querySelector('.cat-info'),
+  loaderEl: document.querySelector('.loader'),
+  errorEl: document.querySelector('.error'),
+};
+
+const { selectEl, textMarkEl, loaderEl, errorEl } = elements;
 
 
+textMarkEl.classList.add('is-hidden');
 
-function createBreedOption(breed) {
-  error.style.display = 'none';
-  
+selectEl.addEventListener('change', createMarkUp);
 
-  const option = document.createElement('option');
-  option.value = breed.id;
-  option.textContent = breed.name;
-  breedSelect.appendChild(option);
+updateSelect();
 
-}
+function updateSelect(data) {
+  fetchBreeds(data)
+    .then(data => {
+      loaderEl.classList.replace('loader', 'is-hidden');
 
-function displayInfoCat(cat) {
-  infoCat.innerHTML = `
-    <img src="${cat.url}" alt="Cat Image" width= "500" />
-    <h3>${cat.breeds[0].name}</h3>
-    <p> ${cat.breeds[0].description}</p>
-    <p> ${cat.breeds[0].temperament}</p> `;
-  infoCat.style.display = 'block';
- 
-}
-
-
-breedSelect.addEventListener('change', () => {
-
-  refs.breedSelect.classList.add('hidden');
-  refs.error.classList.add('hidden');
-
-  const selectedBreedId = breedSelect.value;
-  
-
-  if (selectedBreedId) {
-
-    loader.style.display = 'block';
-    infoCat.style.display = 'none';
-    error.style.display = 'none';
-
-    fetchCatByBreed(selectedBreedId)
-      .then(cat => {
-        displayInfoCat(cat);
-        loader.style.display = 'none';
-        
-      })
-      .catch(() => {
-        Notiflix.Notify.failure(
-          `❌Такого пухнастика не вдалося знайти. Будь ласка перезавантажте сторінку! `
-        );
-        loader.style.display = 'none';
+      let markSelect = data.map(({ name, id }) => {
+        return `<option value ='${id}'>${name}</option>`;
       });
-  } else {
-    infoCat.style.display = 'none';
-    
-  }
-});
+      selectEl.insertAdjacentHTML('beforeend', markSelect);
+      new SlimSelect({
+        select: selectEl,
+      });
+    })
+    .catch(onFetchError);
+}
 
-fetchBreeds()
-  .then(breeds => {
-    breeds.forEach(breed => createBreedOption(breed));
-    loader.style.display = 'none';
-     
-    
-  })
-  .catch(() => {
-    Notiflix.Notify.warning(
-      `Oops! Something went wrong! Try reloading the page!`
-    );
-    loader.style.display = 'none';
-  });
+function createMarkUp(event) {
+  loaderEl.classList.replace('is-hidden', 'loader');
+  selectEl.classList.add('is-hidden');
+  textMarkEl.classList.add('is-hidden');
 
- 
+  const breedId = event.currentTarget.value;
 
-  
+  fetchCatByBreed(breedId)
+    .then(data => {
+      loaderEl.classList.replace('loader', 'is-hidden');
+      selectEl.classList.remove('is-hidden');
+      const { url, breeds } = data[0];
+
+      textMarkEl.innerHTML = `<img src="${url}" alt="${breeds[0].name}" width="400"/><div class="box"><h2>${breeds[0].name}</h2><p>${breeds[0].description}</p><p><strong>Temperament:</strong> ${breeds[0].temperament}</p></div>`;
+      textMarkEl.classList.remove('is-hidden');
+    })
+    .catch(onFetchError);
+}
+
+function onFetchError() {
+  selectEl.classList.remove('is-hidden');
+  loaderEl.classList.replace('loader', 'is-hidden');
+
+  Notify.failure(
+    'Oops! Something went wrong! Try reloading the page or select another cat breed!'
+  );
+}
