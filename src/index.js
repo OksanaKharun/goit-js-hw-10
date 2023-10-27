@@ -12,6 +12,7 @@ const { selectEl, textMarkEl, loaderEl, errorEl } = elements;
 
 
 elements.textMarkEl.classList.add('is-hidden');
+elements.loaderEl.classList.replace('loader', 'is-hidden');
 
 selectEl.addEventListener('change', createMarkUp);
 
@@ -54,17 +55,13 @@ function createMarkUp(event) {
 
 
 function onFetchError() {
-
     selectEl.classList.remove('is-hidden');
-  loaderEl.classList.replace('loader', 'is-hidden');
-  textMarkEl.classList.add('is-hidden');
-
+    loaderEl.classList.replace('loader', 'is-hidden');
+  
     const selectedValue = selectEl.value;
-
     fetchCatByBreed(selectedValue)
     .then((data) => renderCatInfo(data))
     .catch(() => {
-
         Notiflix.Notify.failure("Oops! Something went wrong! Try reloading the page!");
     });
 }
