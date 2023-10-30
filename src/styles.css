@@ -21,9 +21,9 @@ body {
 }
 
 .breed-select {
-    width: 150px;
-    margin-bottom: 10px;
-    padding: 4px;
+    
+    max-width: 400px;
+    margin: auto;
 }
 
 .box {
@@ -32,7 +32,7 @@ body {
     gap: 20px;
 }
 
-.cat-info {
+.info {
     display: grid;
     grid-template-columns: 1fr 2fr;
     align-items: flex-start;
@@ -66,6 +66,7 @@ body {
 }
 
 .loader {
+    margin-top: 10px;
     width: 12px;
     height: 12px;
     border-radius: 50%;
@@ -107,5 +108,17 @@ body {
 }
 
 .is-hidden {
-    display: none;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    border: 0;
+    padding: 0;
+    white-space: nowrap;
+    clip-path: inset(100%);
+    clip: rect(0 0 0 0);
+    overflow: hidden;
+}
+.cat-info{
+    margin-top: 20px;
 }

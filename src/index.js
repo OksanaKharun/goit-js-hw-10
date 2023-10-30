@@ -13,6 +13,8 @@ const { selectEl, textMarkEl, loaderEl, errorEl } = elements;
 
 elements.textMarkEl.classList.add('is-hidden');
 elements.loaderEl.classList.replace('loader', 'is-hidden');
+elements.errorEl.classList.replace('loader', 'is-hidden');
+
 
 selectEl.addEventListener('change', createMarkUp);
 
@@ -22,7 +24,7 @@ function updateSelect(data) {
   fetchBreeds(data)
     .then(data => {
       loaderEl.classList.replace('loader', 'is-hidden');
-
+      
       let markSelect = data.map(({ name, id }) => {
         return `<option value ='${id}'>${name}</option>`;
       });
@@ -36,7 +38,6 @@ function updateSelect(data) {
 
 function createMarkUp(event) {
   loaderEl.classList.replace('is-hidden', 'loader');
-  selectEl.classList.add('is-hidden');
   textMarkEl.classList.add('is-hidden');
 
   const breedId = event.currentTarget.value;
@@ -60,8 +61,10 @@ function onFetchError() {
   
     const selectedValue = selectEl.value;
     fetchCatByBreed(selectedValue)
-    .then((data) => renderCatInfo(data))
-    .catch(() => {
+      .then((data) => renderCatInfo(data))
+    
+      .catch(() => {
         Notiflix.Notify.failure("Oops! Something went wrong! Try reloading the page!");
     });
+  
 }
